@@ -1,0 +1,3 @@
+rootProject.name = 'ssdp.rn'
+
+include ':app'
