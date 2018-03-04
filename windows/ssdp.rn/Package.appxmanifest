@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="400249ea-f6d3-49ba-8169-ad49b6e9e190"
+    Name="92b7ee43-d89f-4471-859d-fedfbb72e2d4"
     Publisher="CN=Ian"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="400249ea-f6d3-49ba-8169-ad49b6e9e190" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="92b7ee43-d89f-4471-859d-fedfbb72e2d4" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ssdp.rn</DisplayName>

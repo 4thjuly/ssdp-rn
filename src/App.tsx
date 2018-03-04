@@ -1,16 +1,16 @@
 // @flow
 import * as React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Client } from './ssdp';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
   windows: 'Press Shift+F10 to open the debug menu.',
-
-  
 });
 
 export default class App extends React.Component<object, object> {
+
   render() {
     return (
       <View style={styles.container}>
@@ -26,6 +26,17 @@ export default class App extends React.Component<object, object> {
       </View>
     );
   }
+
+  componentDidMount() {
+    let client = new Client();
+    client.test("Testing");
+    // client.on('notify', () => {   
+    //   console.log('Got a notification.')
+    // });
+    // client.search('urn:schemas-upnp-org:service:ContentDirectory:1')
+
+  }
+
 }
 
 const styles = StyleSheet.create({
