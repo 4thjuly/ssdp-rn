@@ -3,12 +3,6 @@ import * as React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import { DatagramSocket } from './DatagramSocket';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
-  windows: 'Press Shift+F10 to open the debug menu.',
-});
-
 const SSDP_SEARCH = [
   'M-SEARCH * HTTP/1.1', 
   'HOST: 239.255.255.250:1900',
@@ -38,7 +32,7 @@ export default class App extends React.Component<object, object> {
     //socket.joinMultiCastGroup(SSDP_IP);
     setInterval(() => {
       console.log('Sending');
-      socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH);
+      socket.writeString('10.0.0.26', SSDP_PORT, SSDP_SEARCH);
     }, 5000);
   }
 
