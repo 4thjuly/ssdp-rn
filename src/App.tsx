@@ -26,16 +26,8 @@ export default class App extends React.Component<object, object> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native! (v0.0.1)
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+      <View style={styles.container}> 
+        <Text style={styles.welcome}> Sending M-SEARCH </Text>
       </View>
     );
   }
