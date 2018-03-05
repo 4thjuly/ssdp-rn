@@ -9,11 +9,18 @@ const instructions = Platform.select({
   windows: 'Press Shift+F10 to open the debug menu.',
 });
 
-//const SSDP_IP = '239.255.255.250';
-//const SSDP_IP = '10.0.0.1';
-const SSDP_IP = '255.255.255.255';
+const SSDP_SEARCH = [
+  'M-SEARCH * HTTP/1.1', 
+  'HOST: 239.255.255.250:1900',
+  'MAN: "ssdp:discover"',
+  'MX: 1',
+  'ST: ssdp:all',
+  ''
+].join('\r\n');
+
+// const SSDP_IP = '239.255.255.250';
+const BROADCAST_IP = '255.255.255.255'; // Espruino doesnt support multicase address yet
 const SSDP_PORT = '1900';
-//const SSDP_PORT = '80';
 
 export default class App extends React.Component<object, object> {
 
@@ -39,8 +46,8 @@ export default class App extends React.Component<object, object> {
     //socket.joinMultiCastGroup(SSDP_IP);
     setInterval(() => {
       console.log('Sending');
-      socket.writeString(SSDP_IP, SSDP_PORT, 'Testing1234');
-    }, 1000);
+      socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH);
+    }, 5000);
   }
 
 }
