@@ -10,8 +10,10 @@ const instructions = Platform.select({
 });
 
 //const SSDP_IP = '239.255.255.250';
-const SSDP_IP = '10.0.0.101';
+//const SSDP_IP = '10.0.0.1';
+const SSDP_IP = '255.255.255.255';
 const SSDP_PORT = '1900';
+//const SSDP_PORT = '80';
 
 export default class App extends React.Component<object, object> {
 

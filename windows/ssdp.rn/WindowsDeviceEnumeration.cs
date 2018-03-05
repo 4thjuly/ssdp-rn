@@ -66,11 +66,12 @@ namespace ReactNative.Modules.WindowsNetworkingSockets
         {
             try
             {
+                var datagramSocket = this.datagramSockets[id];
                 var hostname = new HostName(remoteHostname);
-                var outputStream = await this.datagramSockets[id].GetOutputStreamAsync(hostname, remoteServiceName);
-                var dataWriter = new DataWriter(outputStream);
-                dataWriter.WriteString(msg);
-                await dataWriter.FlushAsync();
+                var outputStream = await datagramSocket.GetOutputStreamAsync(hostname, remoteServiceName);
+                var writer = new DataWriter(outputStream);
+                writer.WriteString(msg);
+                await writer.StoreAsync();
                 promise.Resolve(true);
             }
             catch (Exception exc)
