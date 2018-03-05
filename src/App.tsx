@@ -1,13 +1,17 @@
 // @flow
 import * as React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import { Client } from './ssdp';
+import { DatagramSocket } from './DatagramSocket';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
   windows: 'Press Shift+F10 to open the debug menu.',
 });
+
+//const SSDP_IP = '239.255.255.250';
+const SSDP_IP = '10.0.0.101';
+const SSDP_PORT = '1900';
 
 export default class App extends React.Component<object, object> {
 
@@ -27,14 +31,14 @@ export default class App extends React.Component<object, object> {
     );
   }
 
-  componentDidMount() {
-    let client = new Client();
-    client.test("Testing");
-    // client.on('notify', () => {   
-    //   console.log('Got a notification.')
-    // });
-    // client.search('urn:schemas-upnp-org:service:ContentDirectory:1')
-
+  async componentDidMount() {
+    let socket = new DatagramSocket();
+    await socket.create();
+    //socket.joinMultiCastGroup(SSDP_IP);
+    setInterval(() => {
+      console.log('Sending');
+      socket.writeString(SSDP_IP, SSDP_PORT, 'Testing1234');
+    }, 1000);
   }
 
 }

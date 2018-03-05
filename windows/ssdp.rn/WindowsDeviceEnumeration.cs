@@ -9,31 +9,84 @@ using System.Diagnostics;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Popups;
+using Windows.Networking.Sockets;
+using Windows.Networking;
+using Windows.Storage.Streams;
 
-namespace ReactNative.Modules.WindowsDevicesEnumeration
+namespace ReactNative.Modules.WindowsNetworkingSockets
 {
-    public class WindowsDevicesEnumerationModule : ReactContextNativeModuleBase
+    public class DatagramSocketModule : ReactContextNativeModuleBase
     {
-        public WindowsDevicesEnumerationModule(ReactContext reactContext) : base(reactContext)
+        Dictionary<int, DatagramSocket> datagramSockets = new Dictionary<int, DatagramSocket>();
+
+        public DatagramSocketModule(ReactContext reactContext) : base(reactContext)
         {
         }
 
-        public override string Name { get { return "WindowsDevicesEnumerationModule"; } }
+        public override string Name { get { return "DatagramSocketModule"; } }
 
         [ReactMethod]
         public void Test(String msg)
         {
             Debug.WriteLine("Test: " + msg);
         }
+
+        [ReactMethod]
+        public void Create(IPromise promise)
+        {
+            try
+            {
+                var datagramSocket = new DatagramSocket();
+                int id = datagramSocket.GetHashCode();
+                this.datagramSockets[id] = datagramSocket;
+                promise.Resolve(id);
+            }
+            catch (Exception exc)
+            {
+                promise.Reject(exc);
+            }
+        }
+
+        [ReactMethod]
+        public void Destroy(int id)
+        {
+            this.datagramSockets.Remove(id);
+        }
+
+
+        [ReactMethod]
+        public void JoinMulticastGroup(int id, String hostName)
+        {
+            var hn = new HostName(hostName);
+            this.datagramSockets[id].JoinMulticastGroup(hn);
+        }
+
+        [ReactMethod]
+        public async void WriteString(int id, String remoteHostname, String remoteServiceName, String msg, IPromise promise)
+        {
+            try
+            {
+                var hostname = new HostName(remoteHostname);
+                var outputStream = await this.datagramSockets[id].GetOutputStreamAsync(hostname, remoteServiceName);
+                var dataWriter = new DataWriter(outputStream);
+                dataWriter.WriteString(msg);
+                await dataWriter.FlushAsync();
+                promise.Resolve(true);
+            }
+            catch (Exception exc)
+            {
+                promise.Reject(exc);
+            }
+        }
     }
 
-    public class WindowsDevicesEnumerationPackage : IReactPackage
+    public class DatagramSocketPackage : IReactPackage
     {
         public IReadOnlyList<INativeModule> CreateNativeModules(ReactContext reactContext)
         {
             return new List<INativeModule>
             {
-                new WindowsDevicesEnumerationModule(reactContext)
+                new DatagramSocketModule(reactContext)
             };
         }
 
