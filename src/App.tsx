@@ -29,10 +29,12 @@ export default class App extends React.Component<object, object> {
   async componentDidMount() {
     let socket = new DatagramSocket();
     await socket.create();
+    socket.on('message', (msg) => { console.log('socketMsg: ' + msg); });
     //socket.joinMultiCastGroup(SSDP_IP);
     setInterval(() => {
       console.log('Sending');
-      socket.writeString('10.0.0.26', SSDP_PORT, SSDP_SEARCH);
+      // socket.writeString('10.0.0.187', SSDP_PORT, SSDP_SEARCH);
+      socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH);
     }, 5000);
   }
 

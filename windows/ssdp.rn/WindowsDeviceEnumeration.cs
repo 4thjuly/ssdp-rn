@@ -31,12 +31,19 @@ namespace ReactNative.Modules.WindowsNetworkingSockets
             Debug.WriteLine("Test: " + msg);
         }
 
+        void OnMessageReceived(DatagramSocket socket, DatagramSocketMessageReceivedEventArgs eventArguments) {
+            var dataReader = eventArguments.GetDataReader();
+            var msg = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+            Context.GetJavaScriptModule<RCTDeviceEventEmitter>().emit("message", msg);
+        }
+
         [ReactMethod]
         public void Create(IPromise promise)
         {
             try
             {
                 var datagramSocket = new DatagramSocket();
+                datagramSocket.MessageReceived += OnMessageReceived;
                 int id = datagramSocket.GetHashCode();
                 this.datagramSockets[id] = datagramSocket;
                 promise.Resolve(id);

@@ -1,5 +1,7 @@
 const wns = require('NativeModules').DatagramSocketModule;
-
+const NativeEventEmitter = require('NativeEventEmitter');
+const datagramSocketEventEmitter = new NativeEventEmitter(wns);
+ 
 export class DatagramSocket {
     id:number;
 
@@ -19,4 +21,11 @@ export class DatagramSocket {
     joinMultiCastGroup(hostName:string) {
         wns.JoinMulticastGroup(this.id, hostName);
     }
+
+    on(event:string, callback:(string) => void) {
+        datagramSocketEventEmitter.addListener(event, (msg) => { 
+            callback(msg);
+        } );
+    }
+
 }
