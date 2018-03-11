@@ -39,9 +39,11 @@ export default class App extends React.Component<object, object> {
     //socket.joinMultiCastGroup(SSDP_IP);
     setInterval(() => {
       console.log('Sending');
+      socket.writeString(BROADCAST_IP, SSDP_PORT, 'M-SEARCH * HTTP/1.1');
+      // socket.writeString('10.0.0.187', SSDP_PORT, 'M-SEARCH * HTTP/1.1');
       // socket.writeString('10.0.0.187', SSDP_PORT, SSDP_SEARCH);
-      socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH);
-    }, 2500);
+      //socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH);
+    }, 5000);
   }
 
 }
