@@ -34,7 +34,14 @@ namespace ReactNative.Modules.WindowsNetworkingSockets
         void OnMessageReceived(DatagramSocket socket, DatagramSocketMessageReceivedEventArgs eventArguments) {
             var dataReader = eventArguments.GetDataReader();
             var msg = dataReader.ReadString(dataReader.UnconsumedBufferLength);
-            Context.GetJavaScriptModule<RCTDeviceEventEmitter>().emit("message", msg);
+            string remoteIp = eventArguments.RemoteAddress.CanonicalName;
+            string remotePort = eventArguments.RemotePort;
+            var reply = new JObject {
+                { "address", remoteIp } ,
+                { "port", remotePort },
+                { "message", msg }
+            };
+            Context.GetJavaScriptModule<RCTDeviceEventEmitter>().emit("message-info", reply);
         }
 
         [ReactMethod]

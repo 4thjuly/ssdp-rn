@@ -23,8 +23,8 @@ export class DatagramSocket {
     }
 
     on(event:string, callback:(string) => void) {
-        datagramSocketEventEmitter.addListener(event, (msg) => { 
-            callback(msg);
+        datagramSocketEventEmitter.addListener(event, (msgInfo) => { 
+            callback(msgInfo);
         } );
     }
 
