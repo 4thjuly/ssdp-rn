@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { DatagramSocket } from './DatagramSocket';
 
 const SSDP_SEARCH = [
@@ -16,36 +16,46 @@ const SSDP_SEARCH = [
 const BROADCAST_IP = '255.255.255.255'; // Espruino doesnt support multicase address yet
 const SSDP_PORT = '1900';
 
-export default class App extends React.Component<object, object> {
+interface State {
+  text:string;
+}
+
+export default class App extends React.Component<object, State> {
+  state:State = {text:'Starting'};
 
   render() {
     return (
-      <View style={styles.container}> 
-        <Text style={styles.welcome}> Sending M-SEARCH </Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.container} > 
+        <Text style={styles.text} >{this.state.text}</Text>
+      </ScrollView>
     );
   }
 
   onMsgInfo = (msgInfo) => {
     let ip = msgInfo.address;
-    // let msg = msgInfo.message.split('\r\n')[0];
     if (msgInfo.message.includes('EspruinoWifi')) {
-      console.log(`socketMsg: \r\n${msgInfo.message})`);
+      // let msg = `socketMsg: \r\n${msgInfo.message})`;
+      let msg = 'SocketMsg from ' + ip;
+      console.log(msg);
+      this.addText(msg);
     }
+  }
+
+  addText(text) {
+    let newText:string = text + '\r\n' + this.state.text;
+    this.setState({text:newText});
   }
 
   async componentDidMount() {
     let socket = new DatagramSocket();
     await socket.create();
     socket.on('message-info', this.onMsgInfo);
-    //socket.joinMultiCastGroup(SSDP_IP);
     setInterval(() => {
       console.log('Sending');
-      // socket.writeString(BROADCAST_IP, SSDP_PORT, 'M-SEARCH * HTTP/1.1'); // Works
-      // socket.writeString('10.0.0.187', SSDP_PORT, 'M-SEARCH * HTTP/1.1'); // Works
-      // socket.writeString('10.0.0.187', SSDP_PORT, SSDP_SEARCH); // Crashes Esp
+      this.addText('Sending');
       socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH); // Crashes Esp
     }, 5000);
+    this.addText('Started');
   }
 
 }
@@ -54,17 +64,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
+  text: {
+    flex: 1,
+    fontSize: 14,
+    textAlign: 'left',
     margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
 });
