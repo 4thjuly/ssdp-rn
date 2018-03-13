@@ -21,28 +21,32 @@ interface State {
 }
 
 export default class App extends React.Component<object, State> {
-  state:State = {text:'Starting'};
+  state:State = {text:'1) Starting'};
+  line:number = 1;
 
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.container} > 
-        <Text style={styles.text} >{this.state.text}</Text>
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={true}> 
+          <Text style={styles.text} >{this.state.text}</Text>
+        </ScrollView>
+      </View>
     );
   }
 
   onMsgInfo = (msgInfo) => {
     let ip = msgInfo.address;
+    let port = msgInfo.port;
     if (msgInfo.message.includes('EspruinoWifi')) {
-      // let msg = `socketMsg: \r\n${msgInfo.message})`;
-      let msg = 'SocketMsg from ' + ip;
+      let msg = 'SocketMsg from ' + ip + ' ' + port;
       console.log(msg);
       this.addText(msg);
     }
   }
 
   addText(text) {
-    let newText:string = text + '\r\n' + this.state.text;
+    this.line++;
+    let newText:string = this.line + ') ' + text + '\r\n' + this.state.text;
     this.setState({text:newText});
   }
 
@@ -51,9 +55,11 @@ export default class App extends React.Component<object, State> {
     await socket.create();
     socket.on('message-info', this.onMsgInfo);
     setInterval(() => {
+      let ip = BROADCAST_IP;
+      let port = SSDP_PORT;
       console.log('Sending');
-      this.addText('Sending');
-      socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH); // Crashes Esp
+      this.addText('Sending to ' + ip + ' ' + port);
+      socket.writeString(ip, port, SSDP_SEARCH); // Crashes Esp
     }, 5000);
     this.addText('Started');
   }
@@ -73,4 +79,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     margin: 10,
   },
+  scrollView: {
+    flex: 1
+  }
 });
