@@ -28,8 +28,10 @@ export default class App extends React.Component<object, object> {
 
   onMsgInfo = (msgInfo) => {
     let ip = msgInfo.address;
-    let msg = msgInfo.message.split('\r\n')[0];
-    console.log(`socketMsg: ${msg} (${ip})`);
+    // let msg = msgInfo.message.split('\r\n')[0];
+    if (msgInfo.message.includes('EspruinoWifi')) {
+      console.log(`socketMsg: \r\n${msgInfo.message})`);
+    }
   }
 
   async componentDidMount() {
@@ -39,10 +41,10 @@ export default class App extends React.Component<object, object> {
     //socket.joinMultiCastGroup(SSDP_IP);
     setInterval(() => {
       console.log('Sending');
-      socket.writeString(BROADCAST_IP, SSDP_PORT, 'M-SEARCH * HTTP/1.1');
-      // socket.writeString('10.0.0.187', SSDP_PORT, 'M-SEARCH * HTTP/1.1');
-      // socket.writeString('10.0.0.187', SSDP_PORT, SSDP_SEARCH);
-      //socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH);
+      // socket.writeString(BROADCAST_IP, SSDP_PORT, 'M-SEARCH * HTTP/1.1'); // Works
+      // socket.writeString('10.0.0.187', SSDP_PORT, 'M-SEARCH * HTTP/1.1'); // Works
+      // socket.writeString('10.0.0.187', SSDP_PORT, SSDP_SEARCH); // Crashes Esp
+      socket.writeString(BROADCAST_IP, SSDP_PORT, SSDP_SEARCH); // Crashes Esp
     }, 5000);
   }
 
