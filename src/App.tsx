@@ -12,7 +12,7 @@ const SSDP_SEARCH = [
   ''
 ].join('\r\n');
 
-// const SSDP_IP = '239.255.255.250';
+const SSDP_IP = '239.255.255.250';
 const BROADCAST_IP = '255.255.255.255'; // Espruino doesnt support multicase address yet
 const SSDP_PORT = '1900';
 
@@ -56,10 +56,11 @@ export default class App extends React.Component<object, State> {
     socket.on('message-info', this.onMsgInfo);
     setInterval(() => {
       let ip = BROADCAST_IP;
+      // let ip = SSDP_IP; // Espr doesn't support multicast yet 
       let port = SSDP_PORT;
       console.log('Sending');
       this.addText('Sending to ' + ip + ' ' + port);
-      socket.writeString(ip, port, SSDP_SEARCH); // Crashes Esp
+      socket.writeString(ip, port, SSDP_SEARCH); 
     }, 5000);
     this.addText('Started');
   }
