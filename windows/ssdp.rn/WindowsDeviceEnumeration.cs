@@ -37,7 +37,7 @@ namespace ReactNative.Modules.WindowsNetworkingSockets
             string remoteIp = eventArguments.RemoteAddress.CanonicalName;
             string remotePort = eventArguments.RemotePort;
             var reply = new JObject {
-                { "address", remoteIp } ,
+                { "address", remoteIp },
                 { "port", remotePort },
                 { "message", msg }
             };
@@ -69,10 +69,18 @@ namespace ReactNative.Modules.WindowsNetworkingSockets
 
 
         [ReactMethod]
-        public void JoinMulticastGroup(int id, String hostName)
+        public void JoinMulticastGroup(int id, String hostName, IPromise promise)
         {
-            var hn = new HostName(hostName);
-            this.datagramSockets[id].JoinMulticastGroup(hn);
+            try
+            {
+                var hn = new HostName(hostName);
+                this.datagramSockets[id].JoinMulticastGroup(hn);
+                promise.Resolve(true);
+            }
+            catch (Exception exc)
+            {
+                promise.Reject(exc);
+            }
         }
 
         [ReactMethod]
@@ -93,6 +101,53 @@ namespace ReactNative.Modules.WindowsNetworkingSockets
                 promise.Reject(exc);
             }
         }
+
+        [ReactMethod]
+        public async void BindEndpointAsync(int id, string localHostname, string localServiceName, IPromise promise)
+        {
+            try
+            {
+                var datagramSocket = this.datagramSockets[id];
+                var hostname = new HostName(localHostname);
+                await datagramSocket.BindEndpointAsync(hostname, localServiceName);
+                promise.Resolve(true);
+            }
+            catch (Exception exc)
+            {
+                promise.Reject(exc);
+            }
+        }
+
+        [ReactMethod]
+        public async void BindServiceNameAsync(int id, string localServiceName, IPromise promise)
+        {
+            try
+            {
+                var datagramSocket = this.datagramSockets[id];
+                await datagramSocket.BindServiceNameAsync(localServiceName);
+                promise.Resolve(true);
+            }
+            catch (Exception exc)
+            {
+                promise.Reject(exc);
+            }
+        }
+
+        [ReactMethod]
+        public void SetControlMulticastOnly(int id, bool val, IPromise promise)
+        {
+            try
+            {
+                var datagramSocket = this.datagramSockets[id];
+                datagramSocket.Control.MulticastOnly = val;
+                promise.Resolve(true);
+            }
+            catch (Exception exc)
+            {
+                promise.Reject(exc);
+            }
+        }
+
     }
 
     public class DatagramSocketPackage : IReactPackage

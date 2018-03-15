@@ -3,14 +3,14 @@ import * as React from 'react';
 import { Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { DatagramSocket } from './DatagramSocket';
 
-const SSDP_SEARCH = [
-  'M-SEARCH * HTTP/1.1', 
-  'HOST: 239.255.255.250:1900',
-  'MAN: "ssdp:discover"',
-  'MX: 1',
-  'ST: ssdp:all',
-  ''
-].join('\r\n');
+// const SSDP_SEARCH = [
+//   'M-SEARCH * HTTP/1.1', 
+//   'HOST: 239.255.255.250:1900',
+//   'MAN: "ssdp:discover"',
+//   'MX: 1',
+//   'ST: ssdp:all',
+//   ''
+// ].join('\r\n');
 
 const SSDP_IP = '239.255.255.250';
 const BROADCAST_IP = '255.255.255.255'; // Espruino doesnt support multicase address yet
@@ -37,10 +37,12 @@ export default class App extends React.Component<object, State> {
   onMsgInfo = (msgInfo) => {
     let ip = msgInfo.address;
     let port = msgInfo.port;
-    if (msgInfo.message.includes('EspruinoWifi')) {
-      let msg = 'SocketMsg from ' + ip + ' ' + port;
+    if (msgInfo.message.includes('urn:schemas-reszolve-com:device:espruino:1')) {
+      let msg = 'SocketMsg from Espruino ' + ip + ' ' + port;
       console.log(msg);
       this.addText(msg);
+    } else {
+      this.addText('.');
     }
   }
 
@@ -54,14 +56,9 @@ export default class App extends React.Component<object, State> {
     let socket = new DatagramSocket();
     await socket.create();
     socket.on('message-info', this.onMsgInfo);
-    setInterval(() => {
-      let ip = BROADCAST_IP;
-      // let ip = SSDP_IP; // Espr doesn't support multicast yet 
-      let port = SSDP_PORT;
-      console.log('Sending');
-      this.addText('Sending to ' + ip + ' ' + port);
-      socket.writeString(ip, port, SSDP_SEARCH); 
-    }, 5000);
+    await socket.SetControlMulticastOnly(true);
+    await socket.bindServiceNameAsync(SSDP_PORT);
+    await socket.joinMultiCastGroup(SSDP_IP);
     this.addText('Started');
   }
 

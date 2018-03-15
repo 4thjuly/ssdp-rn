@@ -28,4 +28,15 @@ export class DatagramSocket {
         } );
     }
 
+    async bindEndpointAsync(localHostName:string, localServiceName:string) {
+        return await wns.BindEndpointAsync(this.id, localHostName, localServiceName);
+    }
+
+    async SetControlMulticastOnly(value:boolean) {
+        return await wns.SetControlMulticastOnly(this.id, value);
+    }
+
+    async bindServiceNameAsync(localServiceName:string) {
+        return await wns.BindServiceNameAsync(this.id, localServiceName);
+    }
 }
