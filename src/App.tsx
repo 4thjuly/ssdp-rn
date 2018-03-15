@@ -3,15 +3,6 @@ import * as React from 'react';
 import { Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { DatagramSocket } from './DatagramSocket';
 
-// const SSDP_SEARCH = [
-//   'M-SEARCH * HTTP/1.1', 
-//   'HOST: 239.255.255.250:1900',
-//   'MAN: "ssdp:discover"',
-//   'MX: 1',
-//   'ST: ssdp:all',
-//   ''
-// ].join('\r\n');
-
 const SSDP_IP = '239.255.255.250';
 const BROADCAST_IP = '255.255.255.255'; // Espruino doesnt support multicase address yet
 const SSDP_PORT = '1900';
@@ -42,7 +33,8 @@ export default class App extends React.Component<object, State> {
       console.log(msg);
       this.addText(msg);
     } else {
-      this.addText('.');
+      console.log('.');
+      // this.addText('.');
     }
   }
 
