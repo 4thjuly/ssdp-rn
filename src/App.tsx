@@ -25,16 +25,44 @@ export default class App extends React.Component<object, State> {
     );
   }
 
-  onMsgInfo = (msgInfo) => {
+  onMsgInfo = async (msgInfo) => {
+    console.log(msgInfo);
     let ip = msgInfo.address;
     let port = msgInfo.port;
-    if (msgInfo.message.includes('urn:schemas-reszolve-com:device:espruino:1')) {
-      let msg = 'SocketMsg from Espruino ' + ip + ' ' + port;
-      console.log(msg);
-      this.addText(msg);
-    } else {
-      console.log('.');
-      // this.addText('.');
+    let msgLines = msgInfo.message.split('\r\n'); 
+    let msgType = msgLines[0].split(' ')[0]; 
+    if (msgType == 'NOTIFY') {
+      // if (msgInfo.message.includes('urn:schemas-reszolve-com:device:espruino:1')) {
+      //   let msg = 'NOTIFY from Espruino: ' + ip + ' ' + port;
+      //   this.addText(msg);
+      // }
+
+      msgLines.forEach(async (line:string) => {
+        if (line.startsWith('NT:')) {
+          if (line.includes('urn:schemas-reszolve-com:device:espruino:1')) {
+            this.addText('NOTIFY: ' + line);
+            try {
+              let response = await fetch(`http://${msgInfo.address}/State`);
+              let json = await response.json();
+              this.addText('Response: ' + JSON.stringify(json));  
+            } catch (err) {
+              this.addText('Error: ' + JSON.stringify(err));                
+            }          
+          }
+        }
+      });
+
+      if (msgType == 'M-SEARCH') {
+        msgLines.forEach((line:string) => {
+          if (line.startsWith('ST:')) {
+            // this.addText('M-SEARCH: ' + line.substring);
+            if (line.includes('urn:schemas-reszolve-com:device:espruino:1')) {
+              this.addText('M-SEARCH: ' + line);
+            }
+          }
+        });
+      }
+
     }
   }
 
